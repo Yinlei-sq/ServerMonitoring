@@ -1,0 +1,91 @@
+{
+  "name": "server-monitor",
+  "displayName": "Server Monitor",
+  "description": "Monitor local and remote server resources inside VS Code.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.cjs",
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:serverMonitor.dashboard",
+    "onView:serverMonitor.summary",
+    "onCommand:serverMonitor.refreshOverview",
+    "onCommand:serverMonitor.killProcess"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "serverMonitor",
+          "title": "Server Monitor",
+          "icon": "media/activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "serverMonitor": [
+        {
+          "id": "serverMonitor.dashboard",
+          "name": "Dashboard",
+          "type": "webview"
+        },
+        {
+          "id": "serverMonitor.summary",
+          "name": "Summary"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "serverMonitor.refreshOverview",
+        "title": "Server Monitor: Refresh Overview"
+      },
+      {
+        "command": "serverMonitor.killProcess",
+        "title": "Server Monitor: Kill Process"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "serverMonitor.refreshOverview",
+          "when": "view == serverMonitor.dashboard",
+          "group": "navigation"
+        },
+        {
+          "command": "serverMonitor.refreshOverview",
+          "when": "view == serverMonitor.summary",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "serverMonitor.killProcess",
+          "when": "view == serverMonitor.summary && viewItem == killableProcess",
+          "group": "inline"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.cjs --sourcemap",
+    "watch": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.cjs --sourcemap --watch",
+    "test": "node scripts/run-tests.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepack": "npm run build",
+    "vscode:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/vscode": "^1.100.0",
+    "esbuild": "^0.25.3",
+    "typescript": "^5.8.3"
+  }
+}
